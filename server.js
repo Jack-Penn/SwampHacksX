@@ -30,6 +30,7 @@ app.prepare().then(() => {
 
     socket.on("send-signal", (test) => {
       const { signal, to } = test;
+      console.log("test");
       console.log("signal", JSON.stringify(signal));
       socket.to(to).emit("receive-signal", { signal, from: socket.id });
     });
