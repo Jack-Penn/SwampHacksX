@@ -48,7 +48,7 @@ body {
   position: relative;
   font-size: 20px;
   display: flex;
-  font-family: "Noto Looped Thai UI";
+  font-family: "Inter";
   color: #000;
   text-align: center;
   align-items: center;
@@ -160,7 +160,7 @@ body {
   text-align: center;
   font-size: 14px;
   color: #fff;
-  font-family: "Noto Looped Thai UI";
+  font-family: "Inter";
 }
 .chatroom-settings-parent {
   width: 262px;
