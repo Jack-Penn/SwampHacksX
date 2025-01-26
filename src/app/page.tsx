@@ -45,9 +45,8 @@ export default function Home() {
 
       socket.on("room-peers", (peers) => {
         peers.forEach((otherPeer: string) => {
-          const call = peer.call(otherPeer, userStream!);
+          const call = peer.call(otherPeer, userStream);
           call.on("stream", (remoteStream) => {
-            console.log(remoteStream);
             if (videoRef.current) {
               videoRef.current.srcObject = remoteStream;
             }
@@ -56,9 +55,7 @@ export default function Home() {
 
         peer.on("call", (call) => {
           call.answer(userStream);
-          console.log(videoRef.current);
           call.on("stream", (remoteStream) => {
-            console.log(remoteStream);
             if (videoRef.current) {
               videoRef.current.srcObject = remoteStream;
             }
@@ -71,6 +68,10 @@ export default function Home() {
   // Fetch video devices
   useEffect(() => {
     async function fetchDevices() {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
       const devices = await navigator.mediaDevices.enumerateDevices();
       const videoDevices = devices.filter((device) => device.kind === "videoinput");
       setVideoDevices(videoDevices);

@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node server.js",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js",
+    "dev": "npx next dev --experimental-https",
+    "server": "nodemon express.js",
     "lint": "next lint"
   },
   "dependencies": {
+    "express": "^4.21.2",
     "next": "15.1.6",
     "peerjs": "^1.5.4",
     "react": "^19.0.0",
