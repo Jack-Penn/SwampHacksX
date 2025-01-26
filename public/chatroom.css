@@ -10,14 +10,14 @@ body {
     height: 36px;
     flex-shrink: 0;
 }
-.camera {
+.your-camera {
     align-self: stretch;
     flex: 0.8364;
     border-radius: 10px;
     background-color: #663300;
     overflow: hidden;
 }
-.camera1 {
+.peer-camera {
     align-self: stretch;
     flex: 1;
     border-radius: 10px;
@@ -33,6 +33,20 @@ body {
     justify-content: flex-start;
     gap: 32px;
 }
+.your-camera, 
+.peer-camera {
+  /* Flexible container for each video */
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px; /* Soft rounded corners */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Subtle shadow */
+}
+@media (max-width: 768px) {
+    .video {
+      flex-direction: column; /* Stack videos on smaller screens */
+    }
+  }
 .transcription1 {
     width: 121px;
     position: relative;
