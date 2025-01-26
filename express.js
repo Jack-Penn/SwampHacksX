@@ -4,8 +4,8 @@ import { Server } from "socket.io";
 import fs from "fs";
 
 const app = express();
-const port = 5000;
-const hostname = "127.0.1.2";
+const port = 3001;
+const hostname = "localhost";
 
 // Serve static files if needed
 app.use(express.static("public"));
