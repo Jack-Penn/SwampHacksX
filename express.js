@@ -4,6 +4,8 @@ import { Server } from "socket.io";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 
+import translateSegment from "./gemini.js";
+
 const app = express();
 const port = 3001;
 const hostname = "localhost";
@@ -14,6 +16,11 @@ app.use(express.static("public"));
 // Basic route
 app.get("/", (req, res) => {
   res.send("Server is running!");
+});
+
+app.get("/api/translate", async (req, res) => {
+  const translate = await translateSegment(req.params.segment, req.params.phrase, req.params.lang);
+  return res.send(translate);
 });
 
 // Create HTTPS server
