@@ -2,6 +2,7 @@ const socket = io("/"); // Make sure to include socket.io client library
 const peer = new Peer(); // Make sure to include Peer.js library
 
 let speakLang;
+let learnLang;
 
 let isSocketConnected = false;
 let roomId = "";
@@ -52,6 +53,7 @@ function getRoom() {
   speakLang = speak;
 
   const learn = urlParams.get("learn");
+  learnLang = learn;
 
   if (isSocketConnected) {
     socket.emit("find-room", { speak, learn });
@@ -70,6 +72,7 @@ async function joinRoom(roomId) {
   });
   myVideo.srcObject = userStream;
 
+  const recognition = useRecognition(learnLang);
   recognition.callback = createTextBubble;
   recognition.start();
 
