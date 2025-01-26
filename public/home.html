@@ -1,130 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebRTC Video Chat</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1, width=device-width">
+
+	<link rel="stylesheet" href="./style.css" />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@700&display=swap" />
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Noto Looped Thai UI:wght@400;700&display=swap" />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" />
 </head>
 
 <body>
-    <div>
-        <h2>Room Id: <input id="roomId" type="text" class="text-black" /></h2>
-        <button id="connectButton" disabled>Connect</button>
-    </div>
-    <h2 id="socketStatus">Socket Status: Not Connected</h2>
+	<div class="landing-page">
+		<div class="landing-page1">
+			<div class="landing-page-child">
+			</div>
+			<div class="dragoman-parent">
+				<b class="dragoman">Dragoman</b>
+				<b class="learn-any-language">Learn any language, one conversation at a time</b>
+				<div class="frame-child">
+				</div>
+			</div>
+			<div class="chatroom-settings-parent">
+				<b class="chatroom-settings">Chatroom Settings</b>
+				<div class="select-field-parent">
+					<div class="select-field">
+						<div class="label">Who do you want to speak with?</div>
+					</div>
 
-    <div>
-        <h2>Select Camera</h2>
-        <select id="cameraSelect" class="text-black"></select>
-    </div>
+					<div>
+						<div><input type="radio" id="real-person" name="speak-radio" value="real-person" />
+							<label for="real-person">Real Person</label>
+						</div>
 
-    <h2>My Video</h2>
-    <video id="myVideo" autoplay playsinline muted width="100"></video>
+						<div><input type="radio" id="AI" name="speak-radio" value="AI" />
+							<label for="AI">AI Bot</label>
+						</div>
 
-    <h2>Their Video</h2>
-    <video id="peerVideo" autoplay playsinline class="w-full max-w-md rounded-lg shadow-md" width="100"></video>
+					</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/peerjs@1.3.2/dist/peerjs.min.js"></script>
-    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+				</div>
+				<div class="select-field1">
+					<div class="label">Language you speak</div>
+					<select id="speak-language" name="speak-language" class="select">
+						<option value="en">English</option>
+						<option value="es">Spanish</option>
+						<option value="fr">French</option>
+						<option value="de">German</option>
+						<option value="zh">Chinese</option>
+						<option value="ar">Arabic</option>
+						<option value="hi">Hindi</option>
+						<option value="jp">Japanese</option>
+					</select>
 
-    <script>
-        const socket = io("/");  // Make sure to include socket.io client library
-        const peer = new Peer(); // Make sure to include Peer.js library
+				</div>
+				<div class="select-field1">
+					<div class="label">Language you want to learn</div>
+					<select id="learn-language" name="learn-language" class="select">
+						<option value="en">English</option>
+						<option value="es">Spanish</option>
+						<option value="fr">French</option>
+						<option value="de">German</option>
+						<option value="zh">Chinese</option>
+						<option value="ar">Arabic</option>
+						<option value="hi">Hindi</option>
+						<option value="jp">Japanese</option>
+					</select>
+				</div>
 
-        let isSocketConnected = false;
-        let roomId = '';
-        let videoDevices = [];
-        let selectedDeviceId = '';
-        let userStream = null;
+				<button id="connect-button" onclick="submit()">Connect</button>
+			</div>
+		</div>
 
-        const connectButton = document.getElementById("connectButton");
-        const roomIdInput = document.getElementById("roomId");
-        const socketStatus = document.getElementById("socketStatus");
-        const cameraSelect = document.getElementById("cameraSelect");
-        const myVideo = document.getElementById("myVideo");
-        const peerVideo = document.getElementById("peerVideo");
+		<script src="https://cdn.jsdelivr.net/npm/peerjs@1.3.2/dist/peerjs.min.js"></script>
+		<script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
 
-        // Setup connection status
-        socket.on("connect", () => {
-            isSocketConnected = true;
-            socketStatus.textContent = "Socket Status: Connected";
-            connectButton.disabled = false;
-        });
+		<script>
+			const speakLangSelect = document.getElementById("speak-language");
+			const leanLangSelect = document.getElementById("learn-language");
 
-        socket.on("disconnect", () => {
-            isSocketConnected = false;
-            socketStatus.textContent = "Socket Status: Not Connected";
-            connectButton.disabled = true;
-        });
-
-        // Fetch video devices
-        async function fetchDevices() {
-            const devices = await navigator.mediaDevices.enumerateDevices();
-            videoDevices = devices.filter(device => device.kind === "videoinput");
-            videoDevices.forEach(device => {
-                const option = document.createElement("option");
-                option.value = device.deviceId;
-                option.textContent = device.label || `Camera ${device.deviceId}`;
-                cameraSelect.appendChild(option);
-            });
-
-            if (videoDevices.length > 0) {
-                selectedDeviceId = videoDevices[0].deviceId; // Default to first camera
-                cameraSelect.value = selectedDeviceId;
-            }
-        }
-
-        // Join room
-        async function joinRoom() {
-            if (roomId) {
-                // Get user media (camera) based on selected device
-                userStream = await navigator.mediaDevices.getUserMedia({
-                    video: { deviceId: selectedDeviceId },
-                    audio: true
-                });
-                myVideo.srcObject = userStream;
-
-                // Emit room join signal
-                socket.emit("join-room", { roomId, peerId: peer.id });
-
-                socket.on("room-peers", peers => {
-                    peers.forEach(otherPeerId => {
-                        const call = peer.call(otherPeerId, userStream);
-                        call.on("stream", remoteStream => {
-                            peerVideo.srcObject = remoteStream;
-                        });
-                    });
-
-                    peer.on("call", call => {
-                        call.answer(userStream);
-                        call.on("stream", remoteStream => {
-                            peerVideo.srcObject = remoteStream;
-                        });
-                    });
-                });
-            }
-        }
-
-        // Handle UI interactions
-        roomIdInput.addEventListener("input", (e) => {
-            roomId = e.target.value;
-        });
-
-        connectButton.addEventListener("click", () => {
-            joinRoom();
-        });
-
-        cameraSelect.addEventListener("change", (e) => {
-            selectedDeviceId = e.target.value;
-        });
-
-        // Initialize video devices
-        fetchDevices();
-    </script>
-
-    <!-- Include PeerJS and Socket.io libraries -->
-
+			function submit() {
+				window.location.href = `/room.html?speak=${speakLangSelect.value}&learn=${leanLangSelect.value}`
+			}
+		</script>
 </body>
 
 </html>
