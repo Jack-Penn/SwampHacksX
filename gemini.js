@@ -1,7 +1,7 @@
 import "dotenv/config"; // loads in dotenv and adds values onto process.env
 import { env } from "node:process";
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
 
 const schema = {
   description: "Word/Phrase Translation",
@@ -30,6 +30,11 @@ const model = genAI.getGenerativeModel({
 });
 
 export default async function translateSegment(segment, phrase, desiredLang) {
-  const result = await model.generateContent(`Translate "${segment}" to ${desiredLang} in "${phrase}"`);
-  return result.response.text();
+  console.log("gemini query", segment, phrase, desiredLang);
+  try {
+    const result = await model.generateContent(`Translate "${segment}" to language with code: "${desiredLang}" in "${phrase}"`);
+    return result.response.text();
+  } catch (error) {
+    console.log(error);
+  }
 }

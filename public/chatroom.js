@@ -1,6 +1,8 @@
 const socket = io("/"); // Make sure to include socket.io client library
 const peer = new Peer(); // Make sure to include Peer.js library
 
+let speakLang;
+
 let isSocketConnected = false;
 let roomId = "";
 let videoDevices = [];
@@ -47,6 +49,7 @@ function getRoom() {
 
   // Get the value of a specific parameter
   const speak = urlParams.get("speak");
+  speakLang = speak;
 
   const learn = urlParams.get("learn");
 
@@ -67,7 +70,7 @@ async function joinRoom(roomId) {
   });
   myVideo.srcObject = userStream;
 
-  recognition.callback = updateTextBubbles;
+  recognition.callback = createTextBubble;
   recognition.start();
 
   // Emit room join signal
@@ -91,56 +94,33 @@ async function joinRoom(roomId) {
   });
 }
 
-function updateTextBubbles() {}
-
 // Function to handle the dynamic text stream
-function updateTextBubbles(streamText, timeout = 3000) {
-  let lastUpdateTime = Date.now();
-  let currentBubble = null;
-
+function createTextBubble(text) {
   // Create or update the text bubble container
-  const container =
-    document.querySelector(".text-bubble-container") ||
-    (() => {
-      const newContainer = document.createElement("div");
-      newContainer.className = "text-bubble-container";
-      document.body.appendChild(newContainer);
-      return newContainer;
-    })();
+  const container = document.querySelector("#text-bubble-container");
 
   // Function to create a new text bubble
-  const createNewBubble = () => {
-    const textBubble = document.createElement("div");
-    textBubble.className = "text-bubble";
-    container.appendChild(textBubble);
-    return textBubble;
-  };
-
-  // Update the current bubble or create a new one
-  if (!currentBubble || Date.now() - lastUpdateTime > timeout) {
-    currentBubble = createNewBubble();
-  }
-
-  // Clear and populate the current text bubble
-  currentBubble.innerHTML = "";
-  const words = streamText.split(" ");
-  words.forEach((word, index) => {
-    const span = document.createElement("span");
-    span.textContent = word;
-    span.setAttribute("onclick", `handleClick('${word}')`);
-
-    currentBubble.appendChild(span);
-
-    // Add a space between words, except after the last word
-    if (index < words.length - 1) {
-      currentBubble.appendChild(document.createTextNode(" "));
-    }
-  });
-
-  lastUpdateTime = Date.now();
+  const textBubble = document.createElement("div");
+  textBubble.className = "text-bubble";
+  textBubble.innerHTML = text
+    .split(" ")
+    .map((token) => `<span onclick="handleClick('${encodeURIComponent(token)}', '${encodeURIComponent(text)}')">${token} </span>`)
+    .join("");
+  container.appendChild(textBubble);
+  return textBubble;
 }
 
 // Example handleClick function
-function handleClick(word) {
-  alert(`You clicked on: ${word}`);
+async function handleClick(token, text) {
+  const res = await fetch(`/api/translate?segment=${encodeURIComponent(token)}&phrase=${encodeURIComponent(text)}&lang=${encodeURIComponent(speakLang)}`);
+  const { Translation, PhraseToken } = await res.json();
+
+  const container = document.querySelector("#text-bubble-container2");
+
+  // Function to create a new text bubble
+  const textBubble = document.createElement("div");
+  textBubble.className = "text-bubble";
+  textBubble.innerHTML = PhraseToken ?? token + " = " + Translation;
+  container.appendChild(textBubble);
+  return textBubble;
 }

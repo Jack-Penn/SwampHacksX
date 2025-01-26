@@ -19,7 +19,8 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/translate", async (req, res) => {
-  const translate = await translateSegment(req.params.segment, req.params.phrase, req.params.lang);
+  console.log(req.query.segment, req.query.phrase, req.query.lang);
+  const translate = await translateSegment(req.query.segment, req.query.phrase, req.query.lang);
   return res.send(translate);
 });
 

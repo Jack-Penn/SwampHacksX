@@ -2,7 +2,7 @@ let recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 if (recognition) {
   recognition = new recognition();
   recognition.continuous = true;
-  recognition.interimResults = true;
+  // recognition.interimResults = true;
   recognition.lang = "en-US";
 
   recognition.onstart = () => {
@@ -12,25 +12,17 @@ if (recognition) {
   recognition.callback = () => {};
 
   recognition.onresult = function (event) {
-    console.log(event.results);
-    let final = "";
-    let unfinal = "";
+    let transcription = "";
 
-    // for (let i = event.resultIndex; i < event.results.length; i++) {
-    //   if (event.results[i].isFinal) {
-    //     transcription += event.results[i][0].transcript + " ";
-    //   } else {
-    //     transcription += event.results[i][0].transcript;
-    //   }
-    // }
     for (let i = event.resultIndex; i < event.results.length; i++) {
       if (event.results[i].isFinal) {
-        final += event.results[i][0].transcript + " ";
+        transcription += event.results[i][0].transcript + " ";
       } else {
-        unfinal += event.results[i][0].transcript;
+        transcription += event.results[i][0].transcript;
       }
     }
-    // recognition.callback(transcription.trim());
+    console.log(transcription);
+    recognition.callback(transcription.trim());
   };
 
   recognition.onerror = function (event) {
