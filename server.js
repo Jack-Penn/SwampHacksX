@@ -14,17 +14,26 @@ app.prepare().then(() => {
 
   const io = new Server(httpServer);
 
+  let rooms = {};
+
   io.on("connection", (socket) => {
     console.log("A user connected:", socket.id);
 
-    socket.on("join-room", (roomId) => {
+    socket.on("join-room", ({ roomId, peerId }) => {
       socket.join(roomId);
       console.log(`User ${socket.id} joined room ${roomId}`);
       socket.to(roomId).emit("user-connected", socket.id);
 
+      if (!rooms[roomId]) {
+        rooms[roomId] = [];
+      }
+      socket.emit("room-peers", rooms[roomId]);
+      rooms[roomId].push(peerId);
+
       socket.on("disconnect", () => {
         console.log(`User ${socket.id} disconnected`);
-        socket.to(roomId).emit("user-disconnected", socket.id);
+        // rooms[roomId] = rooms[roomId].filter(() => )
+        socket.emit("room-peers", rooms[roomId]);
       });
     });
 
