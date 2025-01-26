@@ -15,13 +15,7 @@ app.get("/", (req, res) => {
 });
 
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: "https://localhost:3000", // Allow requests from your Next.js app
-    methods: ["GET", "POST"], // Specify allowed methods
-    credentials: true, // Include credentials if needed
-  },
-});
+const io = new Server(httpServer, {});
 
 let rooms = {};
 
