@@ -29,7 +29,7 @@
     <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
 
     <script>
-        const socket = io("127.0.1.2:5000");  // Make sure to include socket.io client library
+        const socket = io("/");  // Make sure to include socket.io client library
         const peer = new Peer(); // Make sure to include Peer.js library
 
         let isSocketConnected = false;
