@@ -13,90 +13,43 @@
 </head>
 
 <body>
+	<!-- <h1 style="display: block;">Dragoman</h1> -->
 
-	<div class="chatroom">
-		<div class="chatroom1">
-			<b class="dragoman">Dragoman</b>
-			<div class="ui">
-				<div class="video">
-					<video class="camera" id="myVideo" autoplay playsinline muted></video>
-					<video class="camera1" id="peerVideo" autoplay playsinline muted></video>
-				</div>
-				<div class="transcription">
-					<div class="title-frame">
-						<b class="transcription1">Transcription</b>
-					</div>
-					<div class="message-history">
-						<div class="message-wrap">
-							<div class="message">
-								<div class="this-is-a">Kid named finger kid named binger</div>
-							</div>
-						</div>
-						<div class="message-wrap1">
-							<div class="message1">
-								<div class="this-is-a">坚持另一个坚持另一个坚持另一个坚持另一个坚持另一个</div>
-							</div>
-						</div>
-						<div class="message-wrap">
-							<div class="message2">
-								<div class="this-is-a">Hi there! I’m from the US. How are you?</div>
-							</div>
-						</div>
-						<div class="message-wrap1">
-							<div class="message3">
-								<div class="this-is-a">嘿。我很好。你怎么样？</div>
-							</div>
-						</div>
-						<div class="message-wrap">
-							<div class="message2">
-								<div class="this-is-a">It's beautiful, especially the food and the historical places.
-									Ever been here?</div>
-							</div>
-						</div>
-						<div class="message-wrap1">
-							<div class="message3">
-								<div class="this-is-a">没有，但我很想有一天去看看。我听说那里的建筑很棒。你最喜欢住在那里的哪一点？</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="translator">
-					<div class="translator-wrapper">
-						<b class="translator1">Translator</b>
-					</div>
-					<div class="translation-history">
-						<div class="message-wrap6">
-							<div class="message6">
-								<div class="this-is-a">嘿。我很好。你怎么样？</div>
-							</div>
-						</div>
-						<div class="message-wrap7">
-							<div class="message1">
-								<div class="this-is-a">Hey. I'm fine. How are you?</div>
-							</div>
-						</div>
-						<div class="message-wrap7">
-							<div class="message6">
-								<div class="this-is-a">没有，但我很想有一天去看看。我听说那里的建筑很棒。你最喜欢住在那里的哪一点？</div>
-							</div>
-						</div>
-						<div class="message-wrap7">
-							<div class="message1">
-								<div class="this-is-a">No, but I'd love to visit someday. I hear the architecture is
-									amazing. What's your favorite thing about living there?</div>
-							</div>
-						</div>
-					</div>
-				</div>
+	<div class="container">
+		<div class="column left-column">
+			<video id="myVideo" class="video" autoplay playsinline muted>
+
+			</video>
+			<video id="peerVideo" class="video" autoplay playsinline>
+
+			</video>
+		</div>
+		<div class="column center-column" id="text-bubble-container">
+			<h2>Transcription</h2>
+			<div class="text-bubble">
+				<span onclick="handleClick('Hello')">Hello</span> <span onclick="handleClick('world')">world</span>!
+			</div>
+			<div class="text-bubble">
+				<span onclick="handleClick('This')">This</span> <span onclick="handleClick('is')">is</span> <span
+					onclick="handleClick('a')">a</span> <span onclick="handleClick('test')">test</span>.
+			</div>
+		</div>
+		<div class="column right-column">
+			<h2>Translator</h2>
+			<div class="text-bubble">
+				Example text bubble 1.
+			</div>
+			<div class="text-bubble">
+				Example text bubble 2.
 			</div>
 		</div>
 	</div>
+
+
 	<script src="https://cdn.jsdelivr.net/npm/peerjs@1.3.2/dist/peerjs.min.js"></script>
 	<script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
-
-
+	<script src="speech-to-text.js"></script>
 	<script src="chatroom.js"></script>
-
 
 </body>
 

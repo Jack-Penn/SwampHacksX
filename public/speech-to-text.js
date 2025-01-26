@@ -3,27 +3,34 @@ if (recognition) {
   recognition = new recognition();
   recognition.continuous = true;
   recognition.interimResults = true;
-  recognition.lang = "zh-CN";
-
-  recognition.start();
-  setTimeout(recognition.stop, 1000);
+  recognition.lang = "en-US";
 
   recognition.onstart = () => {
     console.log("Recording started");
   };
 
-  recognition.onresult = function (event) {
-    let transcription = "";
+  recognition.callback = () => {};
 
+  recognition.onresult = function (event) {
+    console.log(event.results);
+    let final = "";
+    let unfinal = "";
+
+    // for (let i = event.resultIndex; i < event.results.length; i++) {
+    //   if (event.results[i].isFinal) {
+    //     transcription += event.results[i][0].transcript + " ";
+    //   } else {
+    //     transcription += event.results[i][0].transcript;
+    //   }
+    // }
     for (let i = event.resultIndex; i < event.results.length; i++) {
       if (event.results[i].isFinal) {
-        transcription += event.results[i][0].transcript + " ";
+        final += event.results[i][0].transcript + " ";
       } else {
-        transcription += event.results[i][0].transcript;
+        unfinal += event.results[i][0].transcript;
       }
     }
-
-    console.log("Real-time transcription:", transcription.trim());
+    // recognition.callback(transcription.trim());
   };
 
   recognition.onerror = function (event) {
